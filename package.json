@@ -1,13 +1,14 @@
 {
-  "name": "authentication-spinner",
-  "version": "1.0.0",
-  "description": "Production code for the spinner component used by the Authentication Team",
+  "name": "@govuk-one-login/spinner",
+  "version": "1.0.1",
+  "description": "Spinner component used when a user returns from IPV to authentication",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "build": "webpack",
     "test": "jest --collectCoverage",
-    "pretty": "prettier . --write"
+    "pretty": "prettier . --write",
+    "pub": "cp README.md dist && cp package.json dist && cd dist && npm publish --access public && cd .."
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",
