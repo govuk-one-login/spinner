@@ -3,5 +3,4 @@
 .idea/
 node_modules
 coverage
-dist/README.md
-dist/package.json
+dist
