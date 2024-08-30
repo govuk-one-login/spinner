@@ -7,7 +7,7 @@ export class Spinner {
   config = {
     apiUrl: "/prove-identity-status",
     msBeforeInformingOfLongWait: 5000,
-    msBeforeAbort: 15000,
+    msBeforeAbort: 25000,
     msBetweenRequests: 1000,
     msBetweenDomUpdate: 2000,
   };
