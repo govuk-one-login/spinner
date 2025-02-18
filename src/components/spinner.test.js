@@ -15,6 +15,7 @@ describe("the spinner component", () => {
          data-error-whatYouCanDo-message-text2="Error what you can do message link text2"
          data-complete-spinnerState="Spinner state complete"
          data-longWait-spinnerStateText="Long wait spinner text"
+         data-ms-before-informing-of-long-wait="6000"
          data-ms-before-abort="30000">
         <form action="/ipv-callback" method="post" novalidate="novalidate">
             <input type="hidden" name="_csrf" value="csrfToken" />
@@ -36,11 +37,13 @@ describe("the spinner component", () => {
   const spinner = new Spinner(container);
 
   describe("config property", () => {
-    test("should exist", () => {
+    test("should exist with default values", () => {
       expect(spinner).toHaveProperty("config");
+      expect(spinner.config.msBetweenDomUpdate).toEqual(2000);
     });
     test("should be configurable through the dataset", () => {
       expect(spinner.config.msBeforeAbort).toEqual(30000);
+      expect(spinner.config.msBeforeInformingOfLongWait).toEqual(6000);
     });
   });
 
