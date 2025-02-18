@@ -14,7 +14,8 @@ describe("the spinner component", () => {
          data-error-whatYouCanDo-message-link-text="Error what you can do message link text"
          data-error-whatYouCanDo-message-text2="Error what you can do message link text2"
          data-complete-spinnerState="Spinner state complete"
-         data-longWait-spinnerStateText="Long wait spinner text">
+         data-longWait-spinnerStateText="Long wait spinner text"
+         data-ms-before-abort="30000">
         <form action="/ipv-callback" method="post" novalidate="novalidate">
             <input type="hidden" name="_csrf" value="csrfToken" />
             <div class="govuk-form-group">
@@ -37,6 +38,9 @@ describe("the spinner component", () => {
   describe("config property", () => {
     test("should exist", () => {
       expect(spinner).toHaveProperty("config");
+    });
+    test("should be configurable through the dataset", () => {
+      expect(spinner.config.msBeforeAbort).toEqual(30000);
     });
   });
 
