@@ -19,8 +19,8 @@ For this component to work as a progressive enhancement you will need:
 1. The `/dist/spinner-app.js` script to be included and deferred on only the relevant page
 1. The spinner CSS to be included in your application CSS
 1. The page to contain an element with:
-    1. an `id` of `spinner-container`
-    1. all the necessary `data-` attributes populated with the content to be displayed.
+   1. an `id` of `spinner-container`
+   1. all the necessary `data-` attributes populated with the content to be displayed.
 1. An API endpoint that can respond to async GET requests initiated by the JavaScript component
 
 <details>
@@ -28,36 +28,41 @@ For this component to work as a progressive enhancement you will need:
 <summary>Example HTML for the spinner container element</summary>
 
 ```html
-    <div id="spinner-container"
-         data-initial-heading="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.initial.heading' | translate + serviceName }}"
-         data-initial-spinnerStateText="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.initial.spinnerStateText' | translate }}"
-         data-initial-spinnerState="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.initial.spinnerState' | translate }}"
-         data-error-heading="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.heading' | translate }}"
-         data-error-messageText="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.messageText' | translate }}"
-         data-error-whatYouCanDo-heading="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.heading' | translate }}"
-         data-error-whatYouCanDo-message-text1="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.message.text1' | translate }}"
-         data-error-whatYouCanDo-message-link-href="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.message.link.href' | translate }}"
-         data-error-whatYouCanDo-message-link-text="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.message.link.text' | translate }}"
-         data-error-whatYouCanDo-message-text2="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.message.text2' | translate }}"
-         data-complete-spinnerState="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.complete.spinnerState' | translate }}"
-         data-longWait-spinnerStateText="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.longWait.spinnerStateText' | translate }}"
-    >
-        <form action="/ipv-callback" method="post" novalidate="novalidate">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-            <div class="govuk-form-group">
-                <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--l" for="more-detail">
-                        {{ 'pages.proveIdentityCheckNew.htmlOnlyVersion.header' | translate }}
-                    </label>
-                </h1>
-                <p class="govuk-body">{{ 'pages.proveIdentityCheckNew.htmlOnlyVersion.paragraph' | translate }}</p>
-                <button type="submit" class="govuk-button">
-                    {{ 'pages.proveIdentityCheckNew.htmlOnlyVersion.button' | translate }}
-                </button>
-            </div>
-        </form>
+<div
+  id="spinner-container"
+  data-initial-heading="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.initial.heading' | translate + serviceName }}"
+  data-initial-spinnerStateText="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.initial.spinnerStateText' | translate }}"
+  data-initial-spinnerState="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.initial.spinnerState' | translate }}"
+  data-error-heading="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.heading' | translate }}"
+  data-error-messageText="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.messageText' | translate }}"
+  data-error-whatYouCanDo-heading="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.heading' | translate }}"
+  data-error-whatYouCanDo-message-text1="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.message.text1' | translate }}"
+  data-error-whatYouCanDo-message-link-href="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.message.link.href' | translate }}"
+  data-error-whatYouCanDo-message-link-text="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.message.link.text' | translate }}"
+  data-error-whatYouCanDo-message-text2="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.message.text2' | translate }}"
+  data-complete-spinnerState="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.complete.spinnerState' | translate }}"
+  data-longWait-spinnerStateText="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.longWait.spinnerStateText' | translate }}"
+  data-ms-before-informing-of-long-wait="6000"
+  data-ms-before-abort="30000"
+>
+  <form action="/ipv-callback" method="post" novalidate="novalidate">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-form-group">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="more-detail">
+          {{ 'pages.proveIdentityCheckNew.htmlOnlyVersion.header' | translate }}
+        </label>
+      </h1>
+      <p class="govuk-body">
+        {{ 'pages.proveIdentityCheckNew.htmlOnlyVersion.paragraph' | translate
+        }}
+      </p>
+      <button type="submit" class="govuk-button">
+        {{ 'pages.proveIdentityCheckNew.htmlOnlyVersion.button' | translate }}
+      </button>
     </div>
-
+  </form>
+</div>
 ```
 
 </details>

@@ -99,6 +99,22 @@ export class Spinner {
           spinnerStateText: element.dataset.longwaitSpinnerstatetext,
         },
       };
+
+      this.config = {
+        apiUrl: element.dataset.apiUrl || this.config.apiUrl,
+        msBeforeInformingOfLongWait:
+          parseInt(element.dataset.msBeforeInformingOfLongWait) ||
+          this.config.msBeforeInformingOfLongWait,
+        msBeforeAbort:
+          parseInt(element.dataset.msBeforeAbort) || this.config.msBeforeAbort,
+        msBetweenRequests:
+          parseInt(element.dataset.msBetweenRequests) ||
+          this.config.msBetweenRequests,
+        msBetweenDomUpdate:
+          parseInt(element.dataset.msBetweenDomUpdate) ||
+          this.config.msBetweenDomUpdate,
+      };
+
       this.domRequirementsMet = true;
     } catch (e) {
       this.domRequirementsMet = false;
