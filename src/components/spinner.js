@@ -98,6 +98,9 @@ export class Spinner {
         longWait: {
           spinnerStateText: element.dataset.longwaitSpinnerstatetext,
         },
+        continueButton: {
+          text: element.dataset.continuebuttonText ?? "Continue"
+        }
       };
 
       this.config = {
@@ -145,7 +148,7 @@ export class Spinner {
       },
       {
         nodeName: "button",
-        text: "Continue",
+        text: this.content.continueButton.text,
         buttonDisabled: this.state.buttonDisabled,
         classes: ["govuk-button", "govuk-!-margin-top-4"],
       },

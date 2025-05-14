@@ -387,4 +387,72 @@ describe("the spinner component", () => {
       expect(spinner.domRequirementsMet).toBe(false);
     });
   });
+
+      describe("the spinner component with custom continue text", () => {
+        document.body.innerHTML = `
+        <div id="spinner-container"
+         data-initial-heading="Initial heading text"
+         data-initial-spinnerStateText="Initial spinner state text"
+         data-initial-spinnerState="pending"
+         data-error-heading="Error heading"
+         data-error-messageText="Error message text"
+         data-error-whatYouCanDo-heading="Error what you can do heading"
+         data-error-whatYouCanDo-message-text1="Error what you can do message text1"
+         data-error-whatYouCanDo-message-link-href="Error what you can do message link href"
+         data-error-whatYouCanDo-message-link-text="Error what you can do message link text"
+         data-error-whatYouCanDo-message-text2="Error what you can do message link text2"
+         data-complete-spinnerState="Spinner state complete"
+         data-longWait-spinnerStateText="Long wait spinner text"
+         data-ms-before-informing-of-long-wait="6000"
+         data-ms-before-abort="30000"
+         data-continueButton-text="Custom continue text">
+        <form action="/ipv-callback" method="post" novalidate="novalidate">
+            <input type="hidden" name="_csrf" value="csrfToken" />
+            <div class="govuk-form-group">
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="more-detail">
+                        Label text
+                    </label>
+                </h1>
+                <p class="govuk-body">Paragraph</p>
+                <button type="submit" class="govuk-button">
+                    Button text
+                </button>
+            </div>
+        </form>
+    </div>`;
+        const container = document.getElementById("spinner-container");
+        const spinner = new Spinner(container);
+
+        test("should include all properties from data attributes", () => {
+            const expectedContent = {
+                complete: {spinnerState: "Spinner state complete"},
+                error: {
+                    heading: "Error heading",
+                    messageText: "Error message text",
+                    whatYouCanDo: {
+                        heading: "Error what you can do heading",
+                        message: {
+                            link: {
+                                href: "Error what you can do message link href",
+                                text: "Error what you can do message link text",
+                            },
+                            text1: "Error what you can do message text1",
+                            text2: "Error what you can do message link text2",
+                        },
+                    },
+                },
+                initial: {
+                    heading: "Initial heading text",
+                    spinnerState: "pending",
+                    spinnerStateText: "Initial spinner state text",
+                },
+                longWait: {spinnerStateText: "Long wait spinner text"},
+                continueButton: {
+                    text: "Custom continue text"
+                }
+            };
+            expect(spinner.content).toEqual(expectedContent);
+        });
+    });
 });
