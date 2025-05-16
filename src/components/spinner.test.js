@@ -300,6 +300,9 @@ describe("the spinner component", () => {
             spinnerStateText: "Initial spinner state text",
           },
           longWait: { spinnerStateText: "Long wait spinner text" },
+          continueButton: {
+            text: "Continue"
+          }
         };
 
         expect(spinner.content).toEqual(expectedContent);
