@@ -4,7 +4,6 @@
 
 Please use the spinner within the `@govuk-one-login/frontend-ui` package.
 
-
 ## About The Project
 
 This spinner component is initialised on a web page rendered by the authentication frontend app (but owned by the Orchestration Team) to replace a server-rendered form with content and interactive controls that update to reflect the readiness state returned by an API.
