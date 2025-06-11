@@ -1,7 +1,6 @@
 import { Spinner } from "./spinner.js";
 
-describe("the spinner component", () => {
-  document.body.innerHTML = `
+const validSpinnerHtml = `
         <div id="spinner-container"
          data-initial-heading="Initial heading text"
          data-initial-spinnerStateText="Initial spinner state text"
@@ -33,8 +32,16 @@ describe("the spinner component", () => {
         </form>
     </div>`;
 
-  const container = document.getElementById("spinner-container");
-  const spinner = new Spinner(container);
+let container;
+let spinner;
+
+beforeEach(() => {
+  document.body.innerHTML = validSpinnerHtml;
+  container = document.getElementById("spinner-container");
+  spinner = new Spinner(container);
+});
+
+describe("the spinner component", () => {
 
   describe("config property", () => {
     test("should exist with default values", () => {
@@ -48,18 +55,12 @@ describe("the spinner component", () => {
   });
 
   describe("requestIDProcessingStatus method", () => {
-    const container = document.getElementById("spinner-container");
-    const spinner = new Spinner(container);
-
     test("should exist", () => {
       expect(spinner).toHaveProperty("requestIDProcessingStatus");
     });
   });
 
   describe("reflectLongWait method", () => {
-    const container = document.getElementById("spinner-container");
-    const spinner = new Spinner(container);
-
     test("should exist", () => {
       expect(spinner).toHaveProperty("reflectLongWait");
     });
@@ -74,9 +75,6 @@ describe("the spinner component", () => {
   });
 
   describe("reflectCompletion method", () => {
-    const container = document.getElementById("spinner-container");
-    const spinner = new Spinner(container);
-
     test("should exist", () => {
       expect(spinner).toHaveProperty("reflectCompletion");
     });
@@ -89,9 +87,6 @@ describe("the spinner component", () => {
   });
 
   describe("reflectError method", () => {
-    const container = document.getElementById("spinner-container");
-    const spinner = new Spinner(container);
-
     test("should exist", () => {
       expect(spinner).toHaveProperty("reflectError");
     });
@@ -112,9 +107,6 @@ describe("the spinner component", () => {
   });
 
   describe("notInErrorOrDoneState method", () => {
-    const container = document.getElementById("spinner-container");
-    const spinner = new Spinner(container);
-
     test("should exist", () => {
       expect(spinner).toHaveProperty("notInErrorOrDoneState");
     });
@@ -266,8 +258,7 @@ describe("the spinner component", () => {
   });
 
   describe("when instantiated with a correctly formed HTMLDivElement", () => {
-    const container = document.getElementById("spinner-container");
-    const spinner = new Spinner(container);
+
     test("should have a container property of the same type", () => {
       expect(spinner.container instanceof HTMLDivElement).toBeTruthy();
     });
@@ -360,27 +351,27 @@ describe("the spinner component", () => {
       // This HTML is missing several data attributes the spinner relies upon
       document.body.innerHTML = `
         <div id="bad-spinner-container"
-        data-initial-heading="Initial heading text"
-         data-initial-spinnerStateText="Initial spinner state text"
-         data-initial-spinnerState="Initial spinner state"
-         data-error-heading="Error heading"
-         data-error-messageText="Error message text"
+          data-initial-heading="Initial heading text"
+          data-initial-spinnerStateText="Initial spinner state text"
+          data-initial-spinnerState="Initial spinner state"
+          data-error-heading="Error heading"
+          data-error-messageText="Error message text"
         >
-        <form action="/ipv-callback" method="post" novalidate="novalidate">
-            <input type="hidden" name="_csrf" value="csrfToken" />
-            <div class="govuk-form-group">
-                <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--l" for="more-detail">
-                        Label text
-                    </label>
-                </h1>
-                <p class="govuk-body">Paragraph</p>
-                <button type="submit" class="govuk-button">
-                    Button text
-                </button>
-            </div>
-        </form>
-    </div>`;
+          <form action="/ipv-callback" method="post" novalidate="novalidate">
+              <input type="hidden" name="_csrf" value="csrfToken" />
+              <div class="govuk-form-group">
+                  <h1 class="govuk-label-wrapper">
+                      <label class="govuk-label govuk-label--l" for="more-detail">
+                          Label text
+                      </label>
+                  </h1>
+                  <p class="govuk-body">Paragraph</p>
+                  <button type="submit" class="govuk-button">
+                      Button text
+                  </button>
+              </div>
+          </form>
+      </div>`;
     });
 
     const container = document.getElementById("bad-spinner-container");
@@ -391,24 +382,24 @@ describe("the spinner component", () => {
     });
   });
 
-      describe("the spinner component with custom continue text", () => {
-        document.body.innerHTML = `
-        <div id="spinner-container"
-         data-initial-heading="Initial heading text"
-         data-initial-spinnerStateText="Initial spinner state text"
-         data-initial-spinnerState="pending"
-         data-error-heading="Error heading"
-         data-error-messageText="Error message text"
-         data-error-whatYouCanDo-heading="Error what you can do heading"
-         data-error-whatYouCanDo-message-text1="Error what you can do message text1"
-         data-error-whatYouCanDo-message-link-href="Error what you can do message link href"
-         data-error-whatYouCanDo-message-link-text="Error what you can do message link text"
-         data-error-whatYouCanDo-message-text2="Error what you can do message link text2"
-         data-complete-spinnerState="Spinner state complete"
-         data-longWait-spinnerStateText="Long wait spinner text"
-         data-ms-before-informing-of-long-wait="6000"
-         data-ms-before-abort="30000"
-         data-continueButton-text="Custom continue text">
+  describe("the spinner component with custom continue text", () => {
+    document.body.innerHTML = `
+      <div id="spinner-container"
+       data-initial-heading="Initial heading text"
+       data-initial-spinnerStateText="Initial spinner state text"
+       data-initial-spinnerState="pending"
+       data-error-heading="Error heading"
+       data-error-messageText="Error message text"
+       data-error-whatYouCanDo-heading="Error what you can do heading"
+       data-error-whatYouCanDo-message-text1="Error what you can do message text1"
+       data-error-whatYouCanDo-message-link-href="Error what you can do message link href"
+       data-error-whatYouCanDo-message-link-text="Error what you can do message link text"
+       data-error-whatYouCanDo-message-text2="Error what you can do message link text2"
+       data-complete-spinnerState="Spinner state complete"
+       data-longWait-spinnerStateText="Long wait spinner text"
+       data-ms-before-informing-of-long-wait="6000"
+       data-ms-before-abort="30000"
+       data-continueButton-text="Custom continue text">
         <form action="/ipv-callback" method="post" novalidate="novalidate">
             <input type="hidden" name="_csrf" value="csrfToken" />
             <div class="govuk-form-group">
@@ -424,38 +415,38 @@ describe("the spinner component", () => {
             </div>
         </form>
     </div>`;
-        const container = document.getElementById("spinner-container");
-        const spinner = new Spinner(container);
+    const container = document.getElementById("spinner-container");
+    const spinner = new Spinner(container);
 
-        test("should include all properties from data attributes", () => {
-            const expectedContent = {
-                complete: {spinnerState: "Spinner state complete"},
-                error: {
-                    heading: "Error heading",
-                    messageText: "Error message text",
-                    whatYouCanDo: {
-                        heading: "Error what you can do heading",
-                        message: {
-                            link: {
-                                href: "Error what you can do message link href",
-                                text: "Error what you can do message link text",
-                            },
-                            text1: "Error what you can do message text1",
-                            text2: "Error what you can do message link text2",
+    test("should include all properties from data attributes", () => {
+        const expectedContent = {
+            complete: {spinnerState: "Spinner state complete"},
+            error: {
+                heading: "Error heading",
+                messageText: "Error message text",
+                whatYouCanDo: {
+                    heading: "Error what you can do heading",
+                    message: {
+                        link: {
+                            href: "Error what you can do message link href",
+                            text: "Error what you can do message link text",
                         },
+                        text1: "Error what you can do message text1",
+                        text2: "Error what you can do message link text2",
                     },
                 },
-                initial: {
-                    heading: "Initial heading text",
-                    spinnerState: "pending",
-                    spinnerStateText: "Initial spinner state text",
-                },
-                longWait: {spinnerStateText: "Long wait spinner text"},
-                continueButton: {
-                    text: "Custom continue text"
-                }
-            };
-            expect(spinner.content).toEqual(expectedContent);
-        });
+            },
+            initial: {
+                heading: "Initial heading text",
+                spinnerState: "pending",
+                spinnerStateText: "Initial spinner state text",
+            },
+            longWait: {spinnerStateText: "Long wait spinner text"},
+            continueButton: {
+                text: "Custom continue text"
+            }
+        };
+        expect(spinner.content).toEqual(expectedContent);
     });
+  });
 });
