@@ -41,6 +41,7 @@ For this component to work as a progressive enhancement you will need:
   data-error-whatYouCanDo-message-link-text="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.message.link.text' | translate }}"
   data-error-whatYouCanDo-message-text2="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.error.whatYouCanDo.message.text2' | translate }}"
   data-complete-spinnerState="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.complete.spinnerState' | translate }}"
+  data-aria-button-enabled-message="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.complete.ariaButtonEnabledMessage' | translate }}"
   data-longWait-spinnerStateText="{{ 'pages.proveIdentityCheckNew.progressivelyEnhancedVersion.longWait.spinnerStateText' | translate }}"
   data-ms-before-informing-of-long-wait="6000"
   data-ms-before-abort="30000"
@@ -87,7 +88,7 @@ When the component JavaScript runs in a user's browser, a DOM lookup is performe
 
 Where this element is found, it is passed as an argument to the `Spinner` constructor. The constructor will then try to populate the `Spinner` content attribute using `data-*` attributes found on the DOM element included in the server-rendered page (this approach has been taken so that content and language translations can be managed alongside other content in authentication frontend).
 
-If any attribute is missing, the component will set `domRequirementsMet` to `false`, preventing state from being initialised and timers being set. As before, if this requirement is not met, nothing happens and the user can proceed to use the non-JavaScript version.
+If any required attribute is missing, the component will set `domRequirementsMet` to `false`, preventing state from being initialised and timers being set. As before, if this requirement is not met, nothing happens and the user can proceed to use the non-JavaScript version.
 
 ### 3. Initialising timers
 
@@ -112,3 +113,26 @@ If a `COMPLETED` or `INTERVENTION` status is returned by the API, the component 
 If a status of `ERROR` is returned, the component is updated to reflect an error and further `fetch` requests are prevented.
 
 If no `fetch` request has resulted in a status of `COMPLETED` or `INTERVENTION` after the time limits set in `informUserWhereWaitIsLong` and `abortUnresponsiveRequest`, their referenced functions will be called (updating the page and aborting the spinner to prevent further `fetch` requests respectively).
+
+## Version History
+
+### 2.0.0
+
+#### Breaking changes
+* Previous versions didn't correctly ensure that required attributes existed, this has now been fixed and will break the spinner if you are missing one of these attributes:
+  * data-initial-heading
+  * data-initial-spinnerStateText
+  * data-initial-spinnerState
+  * data-error-heading
+  * data-error-messagetext
+  * data-error-whatYouCanDo-heading
+  * data-error-whatYouCanDo-message-text1
+  * data-error-whatYouCanDo-message-link-href
+  * data-error-whatYouCanDo-message-link-text
+  * data-error-whatYouCanDo-message-text2
+  * data-complete-spinnerState
+  * data-longwait-spinnerStateText 
+* New required attribute added: `data-aria-button-enabled-message`. This is used to inform screen readers when the continue button becomes enabled
+
+#### Other major changes
+* Added snapshot tests to check the generated spinner HTML
