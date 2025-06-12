@@ -9,7 +9,7 @@
     "test": "jest --collectCoverage",
     "pretty-check": "prettier . --check",
     "pretty": "prettier . --write",
-    "pub": "npm run test && npm run pretty-check && mkdir dist && cp README.md dist && cp package.json dist && cd dist && npm publish --access public && cd .."
+    "pub": "npm run test && npm run pretty-check && mkdir -p dist && cp README.md dist && cp package.json dist && cd dist && npm publish --access public && cd .."
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",
