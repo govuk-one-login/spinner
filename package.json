@@ -1,14 +1,15 @@
 {
   "name": "@govuk-one-login/spinner",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Spinner component used when a user returns from IPV to authentication",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "build": "webpack",
     "test": "jest --collectCoverage",
+    "pretty-check": "prettier . --check",
     "pretty": "prettier . --write",
-    "pub": "cp README.md dist && cp package.json dist && cd dist && npm publish --access public && cd .."
+    "pub": "npm run test && npm run pretty-check && mkdir dist && cp README.md dist && cp package.json dist && cd dist && npm publish --access public && cd ..",
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",

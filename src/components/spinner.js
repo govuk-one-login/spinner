@@ -1,5 +1,7 @@
 export class Spinner {
   container;
+  spinnerContainer;
+  ariaLiveContainer;
   content;
   domRequirementsMet;
   state;
@@ -20,6 +22,8 @@ export class Spinner {
     this.state.spinnerState = "spinner__ready";
     this.state.spinnerStateText = this.content.complete.spinnerState;
     this.state.buttonDisabled = false;
+    this.state.ariaButtonEnabledMessage =
+      this.content.complete.ariaButtonEnabledMessage;
     this.state.done = true;
   };
 
@@ -38,20 +42,18 @@ export class Spinner {
   }
 
   initialiseTimers() {
-    if (this.domRequirementsMet) {
-      this.timers.informUserWhereWaitIsLong = setTimeout(() => {
-        this.reflectLongWait();
-      }, this.config.msBeforeInformingOfLongWait);
+    this.timers.informUserWhereWaitIsLong = setTimeout(() => {
+      this.reflectLongWait();
+    }, this.config.msBeforeInformingOfLongWait);
 
-      this.timers.updateDomTimer = setInterval(
-        this.updateDom,
-        this.config.msBetweenDomUpdate,
-      );
+    this.timers.updateDomTimer = setInterval(
+      this.updateDom,
+      this.config.msBetweenDomUpdate,
+    );
 
-      this.timers.abortUnresponsiveRequest = setTimeout(() => {
-        this.reflectError();
-      }, this.config.msBeforeAbort);
-    }
+    this.timers.abortUnresponsiveRequest = setTimeout(() => {
+      this.reflectError();
+    }, this.config.msBeforeAbort);
   }
 
   initialiseState() {
@@ -61,6 +63,7 @@ export class Spinner {
         spinnerStateText: this.content.initial.spinnerStateText,
         spinnerState: this.content.initial.spinnerState,
         buttonDisabled: true,
+        ariaButtonEnabledMessage: "",
         done: false,
         error: false,
         virtualDom: [],
@@ -70,41 +73,63 @@ export class Spinner {
   }
 
   initialiseContent(element) {
+    function throwIfMissing(data) {
+      if (data === undefined) {
+        throw new Error("Missing required data");
+      }
+      return data;
+    }
+
     try {
       this.content = {
         initial: {
-          heading: element.dataset.initialHeading,
-          spinnerStateText: element.dataset.initialSpinnerstatetext,
-          spinnerState: element.dataset.initialSpinnerstate,
+          heading: throwIfMissing(element.dataset.initialHeading),
+          spinnerStateText: throwIfMissing(
+            element.dataset.initialSpinnerstatetext,
+          ),
+          spinnerState: throwIfMissing(element.dataset.initialSpinnerstate),
         },
         error: {
-          heading: element.dataset.errorHeading,
-          messageText: element.dataset.errorMessagetext,
+          heading: throwIfMissing(element.dataset.errorHeading),
+          messageText: throwIfMissing(element.dataset.errorMessagetext),
           whatYouCanDo: {
-            heading: element.dataset.errorWhatyoucandoHeading,
+            heading: throwIfMissing(element.dataset.errorWhatyoucandoHeading),
             message: {
-              text1: element.dataset.errorWhatyoucandoMessageText1,
+              text1: throwIfMissing(
+                element.dataset.errorWhatyoucandoMessageText1,
+              ),
               link: {
-                href: element.dataset.errorWhatyoucandoMessageLinkHref,
-                text: element.dataset.errorWhatyoucandoMessageLinkText,
+                href: throwIfMissing(
+                  element.dataset.errorWhatyoucandoMessageLinkHref,
+                ),
+                text: throwIfMissing(
+                  element.dataset.errorWhatyoucandoMessageLinkText,
+                ),
               },
-              text2: element.dataset.errorWhatyoucandoMessageText2,
+              text2: throwIfMissing(
+                element.dataset.errorWhatyoucandoMessageText2,
+              ),
             },
           },
         },
         complete: {
-          spinnerState: element.dataset.completeSpinnerstate,
+          spinnerState: throwIfMissing(element.dataset.completeSpinnerstate),
         },
         longWait: {
-          spinnerStateText: element.dataset.longwaitSpinnerstatetext,
+          spinnerStateText: throwIfMissing(
+            element.dataset.longwaitSpinnerstatetext,
+          ),
         },
         continueButton: {
-          text: element.dataset.continuebuttonText ?? "Continue"
-        }
+          text: element.dataset.continuebuttonText ?? "Continue",
+        },
       };
 
       this.config = {
         apiUrl: element.dataset.apiUrl || this.config.apiUrl,
+        ariaButtonEnabledMessage: throwIfMissing(
+          element.dataset.ariaButtonEnabledMessage,
+        ),
         msBeforeInformingOfLongWait:
           parseInt(element.dataset.msBeforeInformingOfLongWait) ||
           this.config.msBeforeInformingOfLongWait,
@@ -194,35 +219,45 @@ export class Spinner {
     return el;
   };
 
+  updateAriaAlert = (messageText) => {
+    while (this.ariaLiveContainer.firstChild) {
+      this.ariaLiveContainer.removeChild(this.ariaLiveContainer.firstChild);
+    }
+
+    /* Create new message and append it to the live region */
+    const messageNode = document.createTextNode(messageText);
+    this.ariaLiveContainer.appendChild(messageNode);
+  };
+
   updateDom = () => {
     const vDomChanged = this.vDomHasChanged(
       this.state.virtualDom,
       this.createVirtualDom(),
     );
-    const container = document.getElementById("spinner-container");
-
     if (vDomChanged) {
       document.title = this.state.heading;
       this.state.virtualDom = this.createVirtualDom();
       const elements = this.state.virtualDom.map(this.convert);
-      container.replaceChildren(...elements);
+      this.spinnerContainer.replaceChildren(...elements);
     }
 
     if (this.state.error) {
-      container.classList.add("spinner-container__error");
+      this.spinnerContainer.classList.add("spinner-container__error");
     }
 
     if (this.state.done) {
       clearInterval(this.timers.updateDomTimer);
+    }
+
+    if (this.state.ariaButtonEnabledMessage !== "") {
+      this.updateAriaAlert(this.config.ariaButtonEnabledMessage);
     }
   };
 
   async requestIDProcessingStatus() {
     try {
       const response = await fetch(this.config.apiUrl);
-
       const data = await response.json();
-
       if (data.status === "COMPLETED" || data.status === "INTERVENTION") {
         this.reflectCompletion();
       } else if (data.status === "ERROR") {
@@ -237,14 +272,32 @@ export class Spinner {
     }
   }
 
+  // For the Aria alert to work reliably we need to create its container once and then update the contents
+  // https://tetralogical.com/blog/2024/05/01/why-are-my-live-regions-not-working/
+  // So here we create a separate DOM element for the Aria live text that won't be touched when the spinner updates.
+  initialiseContainers = () => {
+    this.spinnerContainer = document.createElement("div");
+    this.ariaLiveContainer = document.createElement("div");
+    this.ariaLiveContainer.setAttribute("aria-live", "assertive");
+    this.ariaLiveContainer.classList.add("govuk-visually-hidden");
+    this.ariaLiveContainer.appendChild(document.createTextNode(""));
+    this.container.replaceChildren(
+      this.spinnerContainer,
+      this.ariaLiveContainer,
+    );
+  };
+
   init() {
-    this.initialiseTimers();
+    if (this.domRequirementsMet) {
+      this.initialiseContainers();
+      this.initialiseTimers();
 
-    this.updateDom();
-
-    this.requestIDProcessingStatus().then(() => {
       this.updateDom();
-    });
+
+      this.requestIDProcessingStatus().then(() => {
+        this.updateDom();
+      });
+    }
   }
 
   constructor(domContainer) {
