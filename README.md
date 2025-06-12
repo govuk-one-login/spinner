@@ -133,7 +133,8 @@ If no `fetch` request has resulted in a status of `COMPLETED` or `INTERVENTION` 
   - data-error-whatYouCanDo-message-text2
   - data-complete-spinnerState
   - data-longwait-spinnerStateText
-- New required attribute added: `data-aria-button-enabled-message`. This is used to inform screen readers when the continue button becomes enabled
+- New required attribute added: `data-aria-button-enabled-message`. This is used to inform screen readers when the continue button becomes enabled.
+- New div added around the spinner elements. This is a plain div with no styling so hopefully will not have an impact, but could potentially interact with other client CSS or JS.
 
 #### Other major changes
 
