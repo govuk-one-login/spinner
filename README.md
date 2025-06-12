@@ -119,20 +119,22 @@ If no `fetch` request has resulted in a status of `COMPLETED` or `INTERVENTION` 
 ### 2.0.0
 
 #### Breaking changes
-* Previous versions didn't correctly ensure that required attributes existed, this has now been fixed and will break the spinner if you are missing one of these attributes:
-  * data-initial-heading
-  * data-initial-spinnerStateText
-  * data-initial-spinnerState
-  * data-error-heading
-  * data-error-messagetext
-  * data-error-whatYouCanDo-heading
-  * data-error-whatYouCanDo-message-text1
-  * data-error-whatYouCanDo-message-link-href
-  * data-error-whatYouCanDo-message-link-text
-  * data-error-whatYouCanDo-message-text2
-  * data-complete-spinnerState
-  * data-longwait-spinnerStateText 
-* New required attribute added: `data-aria-button-enabled-message`. This is used to inform screen readers when the continue button becomes enabled
+
+- Previous versions didn't correctly ensure that required attributes existed, this has now been fixed and will break the spinner if you are missing one of these attributes:
+  - data-initial-heading
+  - data-initial-spinnerStateText
+  - data-initial-spinnerState
+  - data-error-heading
+  - data-error-messagetext
+  - data-error-whatYouCanDo-heading
+  - data-error-whatYouCanDo-message-text1
+  - data-error-whatYouCanDo-message-link-href
+  - data-error-whatYouCanDo-message-link-text
+  - data-error-whatYouCanDo-message-text2
+  - data-complete-spinnerState
+  - data-longwait-spinnerStateText
+- New required attribute added: `data-aria-button-enabled-message`. This is used to inform screen readers when the continue button becomes enabled
 
 #### Other major changes
-* Added snapshot tests to check the generated spinner HTML
+
+- Added snapshot tests to check the generated spinner HTML

@@ -22,7 +22,8 @@ export class Spinner {
     this.state.spinnerState = "spinner__ready";
     this.state.spinnerStateText = this.content.complete.spinnerState;
     this.state.buttonDisabled = false;
-    this.state.ariaButtonEnabledMessage = this.content.complete.ariaButtonEnabledMessage;
+    this.state.ariaButtonEnabledMessage =
+      this.content.complete.ariaButtonEnabledMessage;
     this.state.done = true;
   };
 
@@ -83,7 +84,9 @@ export class Spinner {
       this.content = {
         initial: {
           heading: throwIfMissing(element.dataset.initialHeading),
-          spinnerStateText: throwIfMissing(element.dataset.initialSpinnerstatetext),
+          spinnerStateText: throwIfMissing(
+            element.dataset.initialSpinnerstatetext,
+          ),
           spinnerState: throwIfMissing(element.dataset.initialSpinnerstate),
         },
         error: {
@@ -92,12 +95,20 @@ export class Spinner {
           whatYouCanDo: {
             heading: throwIfMissing(element.dataset.errorWhatyoucandoHeading),
             message: {
-              text1: throwIfMissing(element.dataset.errorWhatyoucandoMessageText1),
+              text1: throwIfMissing(
+                element.dataset.errorWhatyoucandoMessageText1,
+              ),
               link: {
-                href: throwIfMissing(element.dataset.errorWhatyoucandoMessageLinkHref),
-                text: throwIfMissing(element.dataset.errorWhatyoucandoMessageLinkText),
+                href: throwIfMissing(
+                  element.dataset.errorWhatyoucandoMessageLinkHref,
+                ),
+                text: throwIfMissing(
+                  element.dataset.errorWhatyoucandoMessageLinkText,
+                ),
               },
-              text2: throwIfMissing(element.dataset.errorWhatyoucandoMessageText2),
+              text2: throwIfMissing(
+                element.dataset.errorWhatyoucandoMessageText2,
+              ),
             },
           },
         },
@@ -105,16 +116,20 @@ export class Spinner {
           spinnerState: throwIfMissing(element.dataset.completeSpinnerstate),
         },
         longWait: {
-          spinnerStateText: throwIfMissing(element.dataset.longwaitSpinnerstatetext),
+          spinnerStateText: throwIfMissing(
+            element.dataset.longwaitSpinnerstatetext,
+          ),
         },
         continueButton: {
           text: element.dataset.continuebuttonText ?? "Continue",
-        }
+        },
       };
 
       this.config = {
         apiUrl: element.dataset.apiUrl || this.config.apiUrl,
-        ariaButtonEnabledMessage: throwIfMissing(element.dataset.ariaButtonEnabledMessage),
+        ariaButtonEnabledMessage: throwIfMissing(
+          element.dataset.ariaButtonEnabledMessage,
+        ),
         msBeforeInformingOfLongWait:
           parseInt(element.dataset.msBeforeInformingOfLongWait) ||
           this.config.msBeforeInformingOfLongWait,
@@ -266,7 +281,10 @@ export class Spinner {
     this.ariaLiveContainer.setAttribute("aria-live", "assertive");
     this.ariaLiveContainer.classList.add("govuk-visually-hidden");
     this.ariaLiveContainer.appendChild(document.createTextNode(""));
-    this.container.replaceChildren(this.spinnerContainer, this.ariaLiveContainer);
+    this.container.replaceChildren(
+      this.spinnerContainer,
+      this.ariaLiveContainer,
+    );
   };
 
   init() {

@@ -1,5 +1,5 @@
 import { Spinner } from "./spinner.js";
-import {wait, waitUntil} from "../test/utils.js";
+import { wait, waitUntil } from "../test/utils.js";
 
 function getValidSpinnerDivHtml(params = {}) {
   return `
@@ -17,10 +17,10 @@ function getValidSpinnerDivHtml(params = {}) {
          data-complete-spinnerState="Spinner state complete"
          data-aria-button-enabled-message="Button enabled"
          data-longWait-spinnerStateText="Long wait spinner text"
-         data-ms-before-informing-of-long-wait="${params.msBeforeInformingOfLongWait || 6000 }"
-         data-ms-before-abort="${params.msBeforeAbort || 30000 }"
-         data-ms-between-dom-update="${params.msBetweenDomUpdate || 2000 }"
-         data-ms-between-requests="${params.msBetweenRequests || 5000 }">
+         data-ms-before-informing-of-long-wait="${params.msBeforeInformingOfLongWait || 6000}"
+         data-ms-before-abort="${params.msBeforeAbort || 30000}"
+         data-ms-between-dom-update="${params.msBetweenDomUpdate || 2000}"
+         data-ms-between-requests="${params.msBetweenRequests || 5000}">
         <form action="/ipv-callback" method="post" novalidate="novalidate">
             <input type="hidden" name="_csrf" value="csrfToken" />
             <div class="govuk-form-group">
@@ -50,7 +50,6 @@ beforeEach(() => {
 });
 
 describe("the spinner component", () => {
-
   describe("config property", () => {
     test("should exist with default values", () => {
       expect(spinner).toHaveProperty("config");
@@ -267,7 +266,6 @@ describe("the spinner component", () => {
   });
 
   describe("when instantiated with a correctly formed HTMLDivElement", () => {
-
     test("should have a container property of the same type", () => {
       expect(spinner.container instanceof HTMLDivElement).toBeTruthy();
     });
@@ -301,8 +299,8 @@ describe("the spinner component", () => {
           },
           longWait: { spinnerStateText: "Long wait spinner text" },
           continueButton: {
-            text: "Continue"
-          }
+            text: "Continue",
+          },
         };
 
         expect(spinner.content).toEqual(expectedContent);
@@ -438,43 +436,43 @@ describe("the spinner component", () => {
     const spinner = new Spinner(container);
 
     test("should include all properties from data attributes", () => {
-        const expectedContent = {
-            complete: {spinnerState: "Spinner state complete"},
-            error: {
-                heading: "Error heading",
-                messageText: "Error message text",
-                whatYouCanDo: {
-                    heading: "Error what you can do heading",
-                    message: {
-                        link: {
-                            href: "Error what you can do message link href",
-                            text: "Error what you can do message link text",
-                        },
-                        text1: "Error what you can do message text1",
-                        text2: "Error what you can do message link text2",
-                    },
-                },
+      const expectedContent = {
+        complete: { spinnerState: "Spinner state complete" },
+        error: {
+          heading: "Error heading",
+          messageText: "Error message text",
+          whatYouCanDo: {
+            heading: "Error what you can do heading",
+            message: {
+              link: {
+                href: "Error what you can do message link href",
+                text: "Error what you can do message link text",
+              },
+              text1: "Error what you can do message text1",
+              text2: "Error what you can do message link text2",
             },
-            initial: {
-                heading: "Initial heading text",
-                spinnerState: "pending",
-                spinnerStateText: "Initial spinner state text",
-            },
-            longWait: {spinnerStateText: "Long wait spinner text"},
-            continueButton: {
-                text: "Custom continue text"
-            }
-        };
-        expect(spinner.content).toEqual(expectedContent);
+          },
+        },
+        initial: {
+          heading: "Initial heading text",
+          spinnerState: "pending",
+          spinnerStateText: "Initial spinner state text",
+        },
+        longWait: { spinnerStateText: "Long wait spinner text" },
+        continueButton: {
+          text: "Custom continue text",
+        },
+      };
+      expect(spinner.content).toEqual(expectedContent);
     });
   });
 
   describe("when the API call returns COMPLETED", () => {
     beforeEach(() => {
       global.fetch = jest.fn(() =>
-          Promise.resolve({
-            json: () => Promise.resolve({ status: "COMPLETED" }),
-          })
+        Promise.resolve({
+          json: () => Promise.resolve({ status: "COMPLETED" }),
+        }),
       );
     });
 
@@ -494,9 +492,9 @@ describe("the spinner component", () => {
   describe("when the API call returns INTERVENTION", () => {
     beforeEach(() => {
       global.fetch = jest.fn(() =>
-          Promise.resolve({
-            json: () => Promise.resolve({ status: "INTERVENTION" }),
-          })
+        Promise.resolve({
+          json: () => Promise.resolve({ status: "INTERVENTION" }),
+        }),
       );
     });
 
@@ -516,9 +514,9 @@ describe("the spinner component", () => {
   describe("when the API call returns ERROR", () => {
     beforeEach(() => {
       global.fetch = jest.fn(() =>
-          Promise.resolve({
-            json: () => Promise.resolve({ status: "ERROR" }),
-          })
+        Promise.resolve({
+          json: () => Promise.resolve({ status: "ERROR" }),
+        }),
       );
     });
 
@@ -537,14 +535,17 @@ describe("the spinner component", () => {
 
   describe("when the long wait time elapses", () => {
     beforeEach(() => {
-      document.body.innerHTML = getValidSpinnerDivHtml({ msBeforeInformingOfLongWait: 20, msBetweenDomUpdate: 10 });
+      document.body.innerHTML = getValidSpinnerDivHtml({
+        msBeforeInformingOfLongWait: 20,
+        msBetweenDomUpdate: 10,
+      });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
 
       global.fetch = jest.fn(() =>
-          Promise.resolve({
-            json: () => Promise.resolve({ status: "PROCESSING" }),
-          })
+        Promise.resolve({
+          json: () => Promise.resolve({ status: "PROCESSING" }),
+        }),
       );
     });
 
@@ -563,14 +564,17 @@ describe("the spinner component", () => {
 
   describe("when the abort time elapses", () => {
     beforeEach(() => {
-      document.body.innerHTML = getValidSpinnerDivHtml({ msBeforeAbort: 20, msBetweenDomUpdate: 10});
+      document.body.innerHTML = getValidSpinnerDivHtml({
+        msBeforeAbort: 20,
+        msBetweenDomUpdate: 10,
+      });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
 
       global.fetch = jest.fn(() =>
-          Promise.resolve({
-            json: () => Promise.resolve({ status: "PROCESSING" }),
-          })
+        Promise.resolve({
+          json: () => Promise.resolve({ status: "PROCESSING" }),
+        }),
       );
     });
 
