@@ -1,6 +1,6 @@
 {
   "name": "@govuk-one-login/spinner",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Spinner component used when a user returns from IPV to authentication",
   "main": "index.js",
   "type": "module",
@@ -9,7 +9,7 @@
     "test": "jest --collectCoverage",
     "pretty-check": "prettier . --check",
     "pretty": "prettier . --write",
-    "pub": "npm run test && npm run pretty-check && mkdir dist && cp README.md dist && cp package.json dist && cd dist && npm publish --access public && cd .."
+    "pub": "npm run test && npm run pretty-check && npm run build && cp README.md dist && cp package.json dist && cd dist && npm publish --access public && cd .."
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",
