@@ -6,6 +6,7 @@ export class Spinner {
   domRequirementsMet;
   state;
   timers;
+  initTime;
   config = {
     apiUrl: "/prove-identity-status",
     msBeforeInformingOfLongWait: 5000,
@@ -25,6 +26,7 @@ export class Spinner {
     this.state.ariaButtonEnabledMessage =
       this.content.complete.ariaButtonEnabledMessage;
     this.state.done = true;
+    sessionStorage.removeItem('spinnerInitTime');
   };
 
   reflectError = () => {
@@ -33,6 +35,7 @@ export class Spinner {
     this.state.spinnerState = "spinner__failed";
     this.state.done = true;
     this.state.error = true;
+    sessionStorage.removeItem('spinnerInitTime');
   };
 
   reflectLongWait() {
@@ -42,19 +45,21 @@ export class Spinner {
   }
 
   initialiseTimers() {
-    this.timers.informUserWhereWaitIsLong = setTimeout(() => {
-      this.reflectLongWait();
-    }, this.config.msBeforeInformingOfLongWait);
-
     this.timers.updateDomTimer = setInterval(
       this.updateDom,
       this.config.msBetweenDomUpdate,
     );
-
-    this.timers.abortUnresponsiveRequest = setTimeout(() => {
-      this.reflectError();
-    }, this.config.msBeforeAbort);
   }
+
+  updateAccordingToTimeElapsed = () => {
+    const elapsedMilliseconds = new Date().getTime() - this.initTime;
+    if (elapsedMilliseconds >= this.config.msBeforeAbort) {
+      this.reflectError();
+    } else if (elapsedMilliseconds >= this.config.msBeforeInformingOfLongWait) {
+      this.reflectLongWait();
+    }
+  };
+
 
   initialiseState() {
     if (this.domRequirementsMet) {
@@ -68,7 +73,15 @@ export class Spinner {
         error: false,
         virtualDom: [],
       };
-      this.timers = {};
+
+      let spinnerInitTime = sessionStorage.getItem('spinnerInitTime')
+      if(spinnerInitTime === null) {
+        spinnerInitTime = new Date().getTime();
+        sessionStorage.setItem('spinnerInitTime', spinnerInitTime.toString());
+      } else {
+        spinnerInitTime = parseInt(spinnerInitTime, 10);
+      }
+      this.initTime = spinnerInitTime;
     }
   }
 
@@ -263,6 +276,7 @@ export class Spinner {
       } else if (data.status === "ERROR") {
         this.reflectError();
       } else if (this.notInErrorOrDoneState()) {
+        this.updateAccordingToTimeElapsed();
         setTimeout(async () => {
           await this.requestIDProcessingStatus();
         }, this.config.msBetweenRequests);
