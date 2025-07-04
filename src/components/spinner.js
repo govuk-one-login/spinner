@@ -5,14 +5,12 @@ export class Spinner {
   content;
   domRequirementsMet;
   state;
-  timers;
   initTime;
   config = {
     apiUrl: "/prove-identity-status",
     msBeforeInformingOfLongWait: 5000,
     msBeforeAbort: 25000,
     msBetweenRequests: 1000,
-    msBetweenDomUpdate: 2000,
   };
 
   notInErrorOrDoneState = () => {
@@ -44,15 +42,8 @@ export class Spinner {
     }
   }
 
-  initialiseTimers() {
-    this.timers.updateDomTimer = setInterval(
-      this.updateDom,
-      this.config.msBetweenDomUpdate,
-    );
-  }
-
   updateAccordingToTimeElapsed = () => {
-    const elapsedMilliseconds = new Date().getTime() - this.initTime;
+    const elapsedMilliseconds = Date.now() - this.initTime;
     if (elapsedMilliseconds >= this.config.msBeforeAbort) {
       this.reflectError();
     } else if (elapsedMilliseconds >= this.config.msBeforeInformingOfLongWait) {
@@ -73,11 +64,10 @@ export class Spinner {
         error: false,
         virtualDom: [],
       };
-      this.timers = {};
 
       let spinnerInitTime = sessionStorage.getItem('spinnerInitTime')
       if(spinnerInitTime === null) {
-        spinnerInitTime = new Date().getTime();
+        spinnerInitTime = Date.now();
         sessionStorage.setItem('spinnerInitTime', spinnerInitTime.toString());
       } else {
         spinnerInitTime = parseInt(spinnerInitTime, 10);
@@ -152,9 +142,6 @@ export class Spinner {
         msBetweenRequests:
           parseInt(element.dataset.msBetweenRequests) ||
           this.config.msBetweenRequests,
-        msBetweenDomUpdate:
-          parseInt(element.dataset.msBetweenDomUpdate) ||
-          this.config.msBetweenDomUpdate,
       };
 
       this.domRequirementsMet = true;
@@ -259,10 +246,6 @@ export class Spinner {
       this.spinnerContainer.classList.add("spinner-container__error");
     }
 
-    if (this.state.done) {
-      clearInterval(this.timers.updateDomTimer);
-    }
-
     if (this.state.ariaButtonEnabledMessage !== "") {
       this.updateAriaAlert(this.config.ariaButtonEnabledMessage);
     }
@@ -283,7 +266,10 @@ export class Spinner {
         }, this.config.msBetweenRequests);
       }
     } catch (e) {
+      console.error("Error in requestIDProcessingStatus:", e);
       this.reflectError();
+    } finally {
+      this.updateDom();
     }
   }
 
@@ -305,13 +291,8 @@ export class Spinner {
   init() {
     if (this.domRequirementsMet) {
       this.initialiseContainers();
-      this.initialiseTimers();
-
       this.updateDom();
-
-      this.requestIDProcessingStatus().then(() => {
-        this.updateDom();
-      });
+      this.requestIDProcessingStatus();
     }
   }
 

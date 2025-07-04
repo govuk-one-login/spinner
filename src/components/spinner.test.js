@@ -53,7 +53,6 @@ describe("the spinner component", () => {
   describe("config property", () => {
     test("should exist with default values", () => {
       expect(spinner).toHaveProperty("config");
-      expect(spinner.config.msBetweenDomUpdate).toEqual(2000);
     });
     test("should be configurable through the dataset", () => {
       expect(spinner.config.msBeforeAbort).toEqual(30000);
@@ -344,17 +343,27 @@ describe("the spinner component", () => {
       expect(spinner.domRequirementsMet).toBe(true);
     });
 
-    test("should have a timers property", () => {
-      expect(spinner).toHaveProperty("timers");
-    });
-
     test("should have a createVirtualDom property", () => {
       expect(spinner).toHaveProperty("createVirtualDom");
     });
 
-    test("should set up the spinner HTML correctly", () => {
-      spinner.init();
-      expect(container.innerHTML).toMatchSnapshot();
+    describe("should set up the spinner HTML correctly", () => {
+      beforeEach(() => {
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+              json: () => Promise.resolve({ status: "PROCESSING" }),
+            }),
+        );
+      });
+
+      afterEach(() => {
+        jest.restoreAllMocks();
+      });
+
+      test("with initial values", () => {
+        spinner.init();
+        expect(container.innerHTML).toMatchSnapshot();
+      });
     });
   });
 
@@ -537,6 +546,7 @@ describe("the spinner component", () => {
     beforeEach(() => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeInformingOfLongWait: 20,
+        msBetweenRequests: 5,
         msBetweenDomUpdate: 10,
       });
       container = document.getElementById("spinner-container");
@@ -555,9 +565,7 @@ describe("the spinner component", () => {
 
     test("should update contents correctly", async () => {
       spinner.init();
-
-      await wait(50);
-
+      await wait(30)
       expect(container.innerHTML).toMatchSnapshot();
     });
   });
