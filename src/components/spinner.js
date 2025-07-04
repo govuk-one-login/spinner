@@ -73,6 +73,7 @@ export class Spinner {
         error: false,
         virtualDom: [],
       };
+      this.timers = {};
 
       let spinnerInitTime = sessionStorage.getItem('spinnerInitTime')
       if(spinnerInitTime === null) {
