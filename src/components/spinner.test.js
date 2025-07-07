@@ -19,7 +19,6 @@ function getValidSpinnerDivHtml(params = {}) {
          data-longWait-spinnerStateText="Long wait spinner text"
          data-ms-before-informing-of-long-wait="${params.msBeforeInformingOfLongWait || 6000}"
          data-ms-before-abort="${params.msBeforeAbort || 30000}"
-         data-ms-between-dom-update="${params.msBetweenDomUpdate || 2000}"
          data-ms-between-requests="${params.msBetweenRequests || 5000}">
         <form action="/ipv-callback" method="post" novalidate="novalidate">
             <input type="hidden" name="_csrf" value="csrfToken" />
@@ -547,7 +546,6 @@ describe("the spinner component", () => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeInformingOfLongWait: 20,
         msBetweenRequests: 5,
-        msBetweenDomUpdate: 10,
       });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
@@ -574,7 +572,6 @@ describe("the spinner component", () => {
     beforeEach(() => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeAbort: 20,
-        msBetweenDomUpdate: 10,
       });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
@@ -598,4 +595,123 @@ describe("the spinner component", () => {
       expect(container.innerHTML).toMatchSnapshot();
     });
   });
+
+  describe("when polling end in processing before abort time and when setTimeout is called is after abort time", () => {
+    beforeEach(() => {
+      document.body.innerHTML = getValidSpinnerDivHtml({
+        msBeforeAbort: 15,
+        msBetweenRequests: 20,
+      });
+      container = document.getElementById("spinner-container");
+      spinner = new Spinner(container);
+
+      global.fetch = jest.fn(() =>
+          Promise.resolve({
+            json: () => Promise.resolve({ status: "PROCESSING" }),
+          }),
+      );
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    test("should end in error state due to the abort time", async () => {
+      spinner.init();
+      await wait(10)
+      expect(spinner.state.spinnerState === "pending")
+      await wait(15)
+      expect(spinner.state.spinnerState === "spinner__failed")
+    });
+  });
+
+  describe("when spinner is initialised", () => {
+    beforeEach(() => {
+      container = document.getElementById("spinner-container");
+      spinner = new Spinner(container);
+
+      global.fetch = jest.fn(() =>
+          Promise.resolve({
+            json: () => Promise.resolve({ status: "PROCESSING" }),
+          }),
+      );
+      sessionStorage.clear();
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      sessionStorage.clear();
+    });
+
+
+    test("should save init time in session storage", () => {
+      spinner.init();
+      const initTime = sessionStorage.getItem("spinnerInitTime");
+      expect(initTime).toBeDefined();
+    });
+  });
+
+  describe("when spinner is end in completion state", () => {
+    beforeEach(() => {
+      document.body.innerHTML = getValidSpinnerDivHtml({
+        msBetweenRequests: 10,
+      });
+      container = document.getElementById("spinner-container");
+      spinner = new Spinner(container);
+
+      global.fetch = jest.fn(() =>
+          Promise.resolve({
+            json: () => Promise.resolve({ status: "COMPLETED" }),
+          }),
+      );
+      sessionStorage.clear();
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+
+    test("should clear init time from session storage", async () => {
+      spinner.init();
+      const initTime = sessionStorage.getItem("spinnerInitTime");
+      expect(initTime).toBeDefined();
+      await wait(20);
+      expect(spinner.state.spinnerState === "Spinner state complete")
+      expect(sessionStorage.getItem("spinnerInitTime")).toBeNull();
+    });
+  });
+
+  describe("when spinner is end in error state", () => {
+    beforeEach(() => {
+      document.body.innerHTML = getValidSpinnerDivHtml({
+        msBeforeAbort: 20,
+        msBetweenRequests: 10,
+      });
+      container = document.getElementById("spinner-container");
+      spinner = new Spinner(container);
+
+      global.fetch = jest.fn(() =>
+          Promise.resolve({
+            json: () => Promise.resolve({ status: "COMPLETED" }),
+          }),
+      );
+      sessionStorage.clear();
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+
+    test("should clear init time from session storage", async () => {
+      spinner.init();
+      const initTime = sessionStorage.getItem("spinnerInitTime");
+      expect(initTime).toBeDefined();
+      await wait(30);
+      expect(spinner.state.spinnerState === "spinner__failed")
+      expect(sessionStorage.getItem("spinnerInitTime")).toBeNull();
+    });
+  });
+
 });

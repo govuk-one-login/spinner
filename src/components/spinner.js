@@ -262,6 +262,10 @@ export class Spinner {
       } else if (this.notInErrorOrDoneState()) {
         this.updateAccordingToTimeElapsed();
         setTimeout(async () => {
+          if ((Date.now() - this.initTime) >= this.config.msBeforeAbort) {
+            this.reflectError();
+            return;
+          }
           await this.requestIDProcessingStatus();
         }, this.config.msBetweenRequests);
       }
