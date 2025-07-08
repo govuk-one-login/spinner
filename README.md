@@ -88,17 +88,16 @@ When the component JavaScript runs in a user's browser, a DOM lookup is performe
 
 Where this element is found, it is passed as an argument to the `Spinner` constructor. The constructor will then try to populate the `Spinner` content attribute using `data-*` attributes found on the DOM element included in the server-rendered page (this approach has been taken so that content and language translations can be managed alongside other content in authentication frontend).
 
-If any required attribute is missing, the component will set `domRequirementsMet` to `false`, preventing state from being initialised and timers being set. As before, if this requirement is not met, nothing happens and the user can proceed to use the non-JavaScript version.
+If any required attribute is missing, the component will set `domRequirementsMet` to `false`, preventing state from being initialised. As before, if this requirement is not met, nothing happens and the user can proceed to use the non-JavaScript version.
 
-### 3. Initialising timers
+### 3. Initialising timer
 
-The instantiated `spinner` is then initialised, beginning with initialising three timers:
+The Spinner component uses either an existing or newly generated timestamp as `initTime`, storing it in `sessionStorage` as `spinnerInitTime`. During the `initialiseState` call in the constructor, it checks if `spinnerInitTime` is already there. If yes, it reuses it. If not, it creates a new one, stores it, and applies it to the config. This way, the spinner stays consistent across page refreshes, and also handles sleep or power saving mode on mobile without breaking.
 
-1. The `informUserWhereWaitIsLong` timer will update the spinner after a specified time to reflect a long wait
-2. The `abortUnresponsiveRequest` timer will abort the spinner, clear timers and render an error state after a specified time
-3. The `updateDomTimer` timer will update the DOM at set intervals to reflect any changes in the virtual DOM
+Attribute `data-ms-between-requests` specify how often in ms polling request is executed.
 
-The duration of these timers are set within the Spinner `config` property.
+If time elapsed from `initTime` is larger than `msBeforeAbort` or `msBeforeInformingOfLongWait` it update the state of the spinner to reflect actual state.
+
 
 ### 4. Perform initial update
 
@@ -108,13 +107,23 @@ Initialisation then proceeds to do an initial update of the DOM, replacing the s
 
 Initialisation then proceeds to request the ID processing status. This uses recursive calls to `this.requestIDProcessingStatus()` at set intervals (as set in `config`), each of which initiates a `fetch` request for the processing status.
 
-If a `COMPLETED` or `INTERVENTION` status is returned by the API, the component will be updated to reflect completion, the call to action will be enabled and further `fetch` requests will be prevented. Clicking the enabled call to action will result in the user making a synchronous `POST` request to the same route and server-side processing will determine if they can continue to the RP or be presented with a page reflecting an account intervention being in place.
+If a `COMPLETED` or `INTERVENTION` status is returned by the API, the component will be updated the spinner state to reflect completion, the call to action will be enabled and further `fetch` requests will be prevented. Also, `initTime` is removed from session storage. Clicking the enabled call to action will result in the user making a synchronous `POST` request to the same route and server-side processing will determine if they can continue to the RP or be presented with a page reflecting an account intervention being in place.
 
-If a status of `ERROR` is returned, the component is updated to reflect an error and further `fetch` requests are prevented.
+If a status of `ERROR` is returned, the component is updated spinner state to reflect an error and further `fetch` requests are prevented. Also, `initTime` is removed from session storage.
 
-If no `fetch` request has resulted in a status of `COMPLETED` or `INTERVENTION` after the time limits set in `informUserWhereWaitIsLong` and `abortUnresponsiveRequest`, their referenced functions will be called (updating the page and aborting the spinner to prevent further `fetch` requests respectively).
+If no `fetch` request has resulted in a status of `COMPLETED`, `INTERVENTION` or `ERROR`, it check how much time elapsed from the `initTime`. If elapsed time is longer than `msBeforeAbort` - recursive call is prevent from further execution and updates the spinner state. Also, `initTime` is removed from session storage. If time elapsed is longer than `msBeforeInformingOfLongWait` but shorter than `msBeforeAbort`, spinner state is updated to reflect the changes in next dom update.
+
+At the end of each recursive call `updateDom` is called to apply changes in the dom according to the spinner state. 
 
 ## Version History
+
+### 2.1.0
+
+- Changed behaviour of the spinner component to relay on the polling mechanism and timestamp stored in the session storage.
+  - Added `initTime` to the config and stores it in session storage 
+  - `updateDom` function is executed at the end of every `requestIDProcessingStatus` call
+  - Removed `msBetweenDomUpdate`
+  - Removed timers as spinner relay on time elapsed from `initTime` checked every `requestIDProcessingStatus` call
 
 ### 2.0.0
 
