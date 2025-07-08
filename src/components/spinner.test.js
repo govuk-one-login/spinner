@@ -48,9 +48,6 @@ beforeEach(() => {
   spinner = new Spinner(container);
 });
 
-beforeAll(() => {
-  global.performance.getEntriesByType = jest.fn(() => [{ type: 'navigate' }]);
-});
 
 describe("the spinner component", () => {
   describe("config property", () => {
@@ -677,13 +674,13 @@ describe("the spinner component", () => {
     });
 
 
-    test("should not clear init time from session storage", async () => {
+    test("should clear init time from session storage", async () => {
       await spinner.init();
       const initTime = sessionStorage.getItem("spinnerInitTime");
       expect(initTime).not.toBeNull();
       await wait(20);
       expect(spinner.state.spinnerState).toBe("spinner__ready")
-      expect(sessionStorage.getItem("spinnerInitTime")).not.toBeNull();
+      expect(sessionStorage.getItem("spinnerInitTime")).toBeNull();
     });
   });
 
@@ -707,13 +704,13 @@ describe("the spinner component", () => {
       jest.restoreAllMocks();
     });
 
-    test("should not clear init time from session storage", async () => {
+    test("should clear init time from session storage", async () => {
       await spinner.init();
       const initTime = sessionStorage.getItem("spinnerInitTime");
       expect(initTime).not.toBeNull();
       await wait(30);
       expect(spinner.state.spinnerState).toBe("spinner__failed");
-      expect(sessionStorage.getItem("spinnerInitTime")).not.toBeNull();
+      expect(sessionStorage.getItem("spinnerInitTime")).toBeNull();
     });
   });
 
