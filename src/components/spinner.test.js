@@ -48,6 +48,10 @@ beforeEach(() => {
   spinner = new Spinner(container);
 });
 
+beforeAll(() => {
+  global.performance.getEntriesByType = jest.fn(() => [{ type: 'navigate' }]);
+});
+
 describe("the spinner component", () => {
   describe("config property", () => {
     test("should exist with default values", () => {
@@ -572,6 +576,7 @@ describe("the spinner component", () => {
     beforeEach(() => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeAbort: 20,
+        msBetweenRequests: 10,
       });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
@@ -588,7 +593,7 @@ describe("the spinner component", () => {
     });
 
     test("should update contents correctly", async () => {
-      spinner.init();
+      await spinner.init();
 
       await wait(50);
 
@@ -635,7 +640,6 @@ describe("the spinner component", () => {
             json: () => Promise.resolve({ status: "PROCESSING" }),
           }),
       );
-      sessionStorage.clear();
     });
 
     afterEach(() => {
@@ -644,11 +648,13 @@ describe("the spinner component", () => {
     });
 
 
-    test("should save init time in session storage", () => {
-      spinner.init();
+    test("should save init time in session storage", async () => {
+      await spinner.init();
       const initTime = sessionStorage.getItem("spinnerInitTime");
-      expect(initTime).toBeDefined();
+      expect(initTime).not.toBeNull();
     });
+
+
   });
 
   describe("when spinner is end in completion state", () => {
@@ -664,7 +670,6 @@ describe("the spinner component", () => {
             json: () => Promise.resolve({ status: "COMPLETED" }),
           }),
       );
-      sessionStorage.clear();
     });
 
     afterEach(() => {
@@ -672,13 +677,13 @@ describe("the spinner component", () => {
     });
 
 
-    test("should clear init time from session storage", async () => {
-      spinner.init();
+    test("should not clear init time from session storage", async () => {
+      await spinner.init();
       const initTime = sessionStorage.getItem("spinnerInitTime");
-      expect(initTime).toBeDefined();
+      expect(initTime).not.toBeNull();
       await wait(20);
-      expect(spinner.state.spinnerState === "Spinner state complete")
-      expect(sessionStorage.getItem("spinnerInitTime")).toBeNull();
+      expect(spinner.state.spinnerState).toBe("spinner__ready")
+      expect(sessionStorage.getItem("spinnerInitTime")).not.toBeNull();
     });
   });
 
@@ -693,24 +698,22 @@ describe("the spinner component", () => {
 
       global.fetch = jest.fn(() =>
           Promise.resolve({
-            json: () => Promise.resolve({ status: "COMPLETED" }),
+            json: () => Promise.resolve({ status: "PROCESSING" }),
           }),
       );
-      sessionStorage.clear();
     });
 
     afterEach(() => {
       jest.restoreAllMocks();
     });
 
-
-    test("should clear init time from session storage", async () => {
-      spinner.init();
+    test("should not clear init time from session storage", async () => {
+      await spinner.init();
       const initTime = sessionStorage.getItem("spinnerInitTime");
-      expect(initTime).toBeDefined();
+      expect(initTime).not.toBeNull();
       await wait(30);
-      expect(spinner.state.spinnerState === "spinner__failed")
-      expect(sessionStorage.getItem("spinnerInitTime")).toBeNull();
+      expect(spinner.state.spinnerState).toBe("spinner__failed");
+      expect(sessionStorage.getItem("spinnerInitTime")).not.toBeNull();
     });
   });
 

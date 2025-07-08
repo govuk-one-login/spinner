@@ -24,7 +24,6 @@ export class Spinner {
     this.state.ariaButtonEnabledMessage =
       this.content.complete.ariaButtonEnabledMessage;
     this.state.done = true;
-    sessionStorage.removeItem('spinnerInitTime');
   };
 
   reflectError = () => {
@@ -33,7 +32,6 @@ export class Spinner {
     this.state.spinnerState = "spinner__failed";
     this.state.done = true;
     this.state.error = true;
-    sessionStorage.removeItem('spinnerInitTime');
   };
 
   reflectLongWait() {
@@ -65,12 +63,18 @@ export class Spinner {
         virtualDom: [],
       };
 
+      const navType = performance.getEntriesByType('navigation')[0]?.type;
+      if(navType === 'navigate') {
+        sessionStorage.removeItem('spinnerInitTime');
+      }
+
       let spinnerInitTime = sessionStorage.getItem('spinnerInitTime')
       if(spinnerInitTime === null) {
         spinnerInitTime = Date.now();
         sessionStorage.setItem('spinnerInitTime', spinnerInitTime.toString());
       } else {
         spinnerInitTime = parseInt(spinnerInitTime, 10);
+        this.updateAccordingToTimeElapsed();
       }
       this.initTime = spinnerInitTime;
     }
@@ -264,6 +268,7 @@ export class Spinner {
         setTimeout(async () => {
           if ((Date.now() - this.initTime) >= this.config.msBeforeAbort) {
             this.reflectError();
+            this.updateDom();
             return;
           }
           await this.requestIDProcessingStatus();
