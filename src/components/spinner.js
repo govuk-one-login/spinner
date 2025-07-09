@@ -64,16 +64,6 @@ export class Spinner {
         error: false,
         virtualDom: [],
       };
-
-      let spinnerInitTime = sessionStorage.getItem('spinnerInitTime')
-      if(spinnerInitTime === null) {
-        spinnerInitTime = Date.now();
-        sessionStorage.setItem('spinnerInitTime', spinnerInitTime.toString());
-      } else {
-        spinnerInitTime = parseInt(spinnerInitTime, 10);
-      }
-      this.initTime = spinnerInitTime;
-      this.updateAccordingToTimeElapsed();
     }
   }
 
@@ -294,8 +284,21 @@ export class Spinner {
     );
   };
 
+  initTimer = () => {
+    let spinnerInitTime = sessionStorage.getItem('spinnerInitTime')
+    if(spinnerInitTime === null) {
+      spinnerInitTime = Date.now();
+      sessionStorage.setItem('spinnerInitTime', spinnerInitTime.toString());
+    } else {
+      spinnerInitTime = parseInt(spinnerInitTime, 10);
+    }
+    this.initTime = spinnerInitTime;
+    this.updateAccordingToTimeElapsed();
+  }
+
   init() {
     if (this.domRequirementsMet) {
+      this.initTimer();
       this.initialiseContainers();
       this.updateDom();
       this.requestIDProcessingStatus();
