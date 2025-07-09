@@ -6,6 +6,7 @@ export class Spinner {
   domRequirementsMet;
   state;
   initTime;
+  abortController;
   config = {
     apiUrl: "/prove-identity-status",
     msBeforeInformingOfLongWait: 5000,
@@ -243,30 +244,35 @@ export class Spinner {
   };
 
   async requestIDProcessingStatus() {
-    try {
-      const response = await fetch(this.config.apiUrl);
-      const data = await response.json();
-      if (data.status === "COMPLETED" || data.status === "INTERVENTION") {
-        this.reflectCompletion();
-      } else if (data.status === "ERROR") {
-        this.reflectError();
-      } else if (this.notInErrorOrDoneState()) {
-        this.updateAccordingToTimeElapsed();
-        setTimeout(async () => {
-          if ((Date.now() - this.initTime) >= this.config.msBeforeAbort) {
+    const signal = this.abortController.signal;
+    await fetch(this.config.apiUrl, { signal })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === "COMPLETED" || data.status === "INTERVENTION") {
+            this.reflectCompletion();
+          } else if (data.status === "ERROR") {
             this.reflectError();
-            this.updateDom();
-            return;
+          } else if (this.notInErrorOrDoneState()) {
+            this.updateAccordingToTimeElapsed();
+            setTimeout(() => {
+              if ((Date.now() - this.initTime) >= this.config.msBeforeAbort) {
+                this.reflectError();
+                this.updateDom();
+                return;
+              }
+              this.requestIDProcessingStatus();
+            }, this.config.msBetweenRequests);
           }
-          await this.requestIDProcessingStatus();
-        }, this.config.msBetweenRequests);
-      }
-    } catch (e) {
-      console.error("Error in requestIDProcessingStatus:", e);
-      this.reflectError();
-    } finally {
-      this.updateDom();
-    }
+        })
+        .catch(error => {
+          if (error.name !== "AbortError") {
+            console.error("Error in requestIDProcessingStatus:", e);
+            this.reflectError();
+          }
+        })
+        .finally(() => {
+          this.updateDom();
+        });
   }
 
   // For the Aria alert to work reliably we need to create its container once and then update the contents
@@ -296,6 +302,17 @@ export class Spinner {
     this.updateAccordingToTimeElapsed();
   }
 
+  handleAbort = () => {
+    this.abortController.abort();
+  }
+
+  initialiseAbortController = () => {
+    this.abortController = new AbortController();
+    window.removeEventListener('beforeunload', this.handleAbort);
+    window.addEventListener('beforeunload', this.handleAbort);
+  }
+
+
   init() {
     if (this.domRequirementsMet) {
       this.initTimer();
@@ -309,5 +326,6 @@ export class Spinner {
     this.container = domContainer;
     this.initialiseContent(this.container);
     this.initialiseState();
+    this.initialiseAbortController();
   }
 }
