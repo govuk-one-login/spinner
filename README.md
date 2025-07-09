@@ -92,7 +92,7 @@ If any required attribute is missing, the component will set `domRequirementsMet
 
 ### 3. Initialising timer
 
-The Spinner component uses either an existing or newly generated timestamp as `initTime`, storing it in `sessionStorage` as `spinnerInitTime`. During the `initialiseState` call in the constructor, it checks if `spinnerInitTime` is already there. If yes, it reuses it. If not, it creates a new one, stores it, and applies it to the config. This way, the spinner stays consistent across page refreshes, and also handles sleep or power saving mode on mobile without breaking.
+The Spinner component uses either an existing or newly generated timestamp as `initTime`, storing it in `sessionStorage` as `spinnerInitTime`. During the `initTimer` function call in the `init`, it checks if `spinnerInitTime` is already there. If yes, it reuses it. If not, it creates a new one, stores it, and applies it to the config. This way, the spinner stays consistent across page refreshes, and also handles sleep or power saving mode on mobile without breaking.
 
 Attribute `data-ms-between-requests` specify how often in ms polling request is executed.
 
@@ -121,9 +121,10 @@ At the end of each recursive call `updateDom` is called to apply changes in the 
 
 - Changed behaviour of the spinner component to relay on the polling mechanism and timestamp stored in the session storage.
   - Added `initTime` to the config and stores it in session storage 
+  - Added abortController to cancel request on page unload
   - `updateDom` function is executed at the end of every `requestIDProcessingStatus` call
   - Removed `msBetweenDomUpdate`
-  - Removed timers as spinner relay on time elapsed from `initTime` checked every `requestIDProcessingStatus` call
+  - Removed timers as spinner relay on time elapsed from `initTime` 
 
 ### 2.0.0
 
