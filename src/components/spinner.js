@@ -6,12 +6,14 @@ export class Spinner {
   domRequirementsMet;
   state;
   initTime;
+  updateDomTimer;
   abortController;
   config = {
     apiUrl: "/prove-identity-status",
     msBeforeInformingOfLongWait: 5000,
     msBeforeAbort: 25000,
     msBetweenRequests: 1000,
+    msBetweenDomUpdate: 2000,
   };
 
   notInErrorOrDoneState = () => {
@@ -35,6 +37,7 @@ export class Spinner {
     this.state.done = true;
     this.state.error = true;
     sessionStorage.removeItem('spinnerInitTime');
+    this.abortController.abort();
   };
 
   reflectLongWait() {
@@ -134,6 +137,9 @@ export class Spinner {
         msBetweenRequests:
           parseInt(element.dataset.msBetweenRequests) ||
           this.config.msBetweenRequests,
+        msBetweenDomUpdate:
+            parseInt(element.dataset.msBetweenDomUpdate) ||
+            this.config.msBetweenDomUpdate,
       };
 
       this.domRequirementsMet = true;
@@ -238,6 +244,10 @@ export class Spinner {
       this.spinnerContainer.classList.add("spinner-container__error");
     }
 
+    if (this.state.done) {
+      clearInterval(this.updateDomTimer);
+    }
+
     if (this.state.ariaButtonEnabledMessage !== "") {
       this.updateAriaAlert(this.config.ariaButtonEnabledMessage);
     }
@@ -253,11 +263,9 @@ export class Spinner {
           } else if (data.status === "ERROR") {
             this.reflectError();
           } else if (this.notInErrorOrDoneState()) {
-            this.updateAccordingToTimeElapsed();
             setTimeout(async () => {
               if ((Date.now() - this.initTime) >= this.config.msBeforeAbort) {
                 this.reflectError();
-                this.updateDom();
                 return;
               }
               await this.requestIDProcessingStatus();
@@ -269,9 +277,6 @@ export class Spinner {
             console.error("Error in requestIDProcessingStatus:", e);
             this.reflectError();
           }
-        })
-        .finally(() => {
-          this.updateDom();
         });
   }
 
@@ -300,6 +305,12 @@ export class Spinner {
     }
     this.initTime = spinnerInitTime;
     this.updateAccordingToTimeElapsed();
+
+    this.updateDomTimer = setInterval(() => {
+      this.updateAccordingToTimeElapsed();
+      this.updateDom();
+    }, this.config.msBetweenDomUpdate)
+
   }
 
   handleAbort = () => {
@@ -318,7 +329,8 @@ export class Spinner {
       this.initTimer();
       this.initialiseContainers();
       this.updateDom();
-      this.requestIDProcessingStatus();
+      this.requestIDProcessingStatus()
+          .then(() => this.updateDom());
     }
   }
 

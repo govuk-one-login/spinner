@@ -19,6 +19,7 @@ function getValidSpinnerDivHtml(params = {}) {
          data-longWait-spinnerStateText="Long wait spinner text"
          data-ms-before-informing-of-long-wait="${params.msBeforeInformingOfLongWait || 6000}"
          data-ms-before-abort="${params.msBeforeAbort || 30000}"
+         data-ms-between-dom-update="${params.msBetweenDomUpdate || 2000}"
          data-ms-between-requests="${params.msBetweenRequests || 5000}">
         <form action="/ipv-callback" method="post" novalidate="novalidate">
             <input type="hidden" name="_csrf" value="csrfToken" />
@@ -546,7 +547,8 @@ describe("the spinner component", () => {
     beforeEach(() => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeInformingOfLongWait: 20,
-        msBetweenRequests: 5,
+        msBetweenRequests: 10,
+        msBetweenDomUpdate: 10,
       });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
@@ -574,6 +576,7 @@ describe("the spinner component", () => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeAbort: 20,
         msBetweenRequests: 10,
+        msBetweenDomUpdate: 10,
       });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
@@ -603,6 +606,7 @@ describe("the spinner component", () => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeAbort: 15,
         msBetweenRequests: 20,
+        msBetweenDomUpdate: 10,
       });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
@@ -658,6 +662,7 @@ describe("the spinner component", () => {
     beforeEach(() => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBetweenRequests: 10,
+        msBetweenDomUpdate: 10,
       });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
