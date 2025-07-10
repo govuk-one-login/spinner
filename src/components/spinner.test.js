@@ -605,7 +605,7 @@ describe("the spinner component", () => {
     beforeEach(() => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeAbort: 15,
-        msBetweenRequests: 20,
+        msBetweenRequests: 5,
         msBetweenDomUpdate: 10,
       });
       container = document.getElementById("spinner-container");

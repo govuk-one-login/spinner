@@ -277,7 +277,10 @@ export class Spinner {
             console.error("Error in requestIDProcessingStatus:", e);
             this.reflectError();
           }
-        });
+        })
+        .finally(() => {
+          this.updateDom();
+        })
   }
 
   // For the Aria alert to work reliably we need to create its container once and then update the contents
@@ -329,8 +332,7 @@ export class Spinner {
       this.initTimer();
       this.initialiseContainers();
       this.updateDom();
-      this.requestIDProcessingStatus()
-          .then(() => this.updateDom());
+      this.requestIDProcessingStatus();
     }
   }
 
