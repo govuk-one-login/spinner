@@ -266,6 +266,7 @@ export class Spinner {
             setTimeout(async () => {
               if ((Date.now() - this.initTime) >= this.config.msBeforeAbort) {
                 this.reflectError();
+                this.updateDom();
                 return;
               }
               await this.requestIDProcessingStatus();
