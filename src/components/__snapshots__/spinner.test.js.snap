@@ -19,7 +19,7 @@ exports[`the spinner component when instantiated with a badly formed HTMLDivElem
       "
 `;
 
-exports[`the spinner component when instantiated with a correctly formed HTMLDivElement should set up the spinner HTML correctly 1`] = `"<div><h1 class="govuk-heading-l">Initial heading text</h1><div id="spinner" class="spinner spinner__pending centre pending"></div><p class="centre spinner-state-text govuk-body">Initial spinner state text</p><button class="govuk-button govuk-!-margin-top-4" disabled="true">Continue</button></div><div aria-live="assertive" class="govuk-visually-hidden"></div>"`;
+exports[`the spinner component when instantiated with a correctly formed HTMLDivElement should set up the spinner HTML correctly with initial values 1`] = `"<div><h1 class="govuk-heading-l">Initial heading text</h1><div id="spinner" class="spinner spinner__pending centre pending"></div><p class="centre spinner-state-text govuk-body">Initial spinner state text</p><button class="govuk-button govuk-!-margin-top-4" disabled="true">Continue</button></div><div aria-live="assertive" class="govuk-visually-hidden"></div>"`;
 
 exports[`the spinner component when the API call returns COMPLETED should update contents correctly 1`] = `"<div><h1 class="govuk-heading-l">Initial heading text</h1><div id="spinner" class="spinner spinner__pending centre spinner__ready"></div><p class="centre spinner-state-text govuk-body">Spinner state complete</p><button class="govuk-button govuk-!-margin-top-4">Continue</button></div><div aria-live="assertive" class="govuk-visually-hidden">Button enabled</div>"`;
 
