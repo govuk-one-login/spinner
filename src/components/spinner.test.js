@@ -601,12 +601,12 @@ describe("the spinner component", () => {
     });
   });
 
-  describe("when polling end in processing before abort time and when setTimeout is called is after abort time", () => {
+  describe("when scheduled setTimeout tries to execute recursive function after msBeforeAbort", () => {
     beforeEach(() => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeAbort: 15,
         msBetweenRequests: 5,
-        msBetweenDomUpdate: 10,
+        msBetweenDomUpdate: 2000,
       });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
@@ -694,6 +694,7 @@ describe("the spinner component", () => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeAbort: 20,
         msBetweenRequests: 10,
+        msBetweenDomUpdate: 5,
       });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
