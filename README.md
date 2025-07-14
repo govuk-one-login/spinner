@@ -108,11 +108,11 @@ Initialisation then proceeds to do an initial update of the DOM, replacing the s
 
 Initialisation then proceeds to request the ID processing status. This uses recursive calls to `this.requestIDProcessingStatus()` at set intervals (as set in `config`), each of which initiates a `fetch` request for the processing status.
 
-If a `COMPLETED` or `INTERVENTION` status is returned by the API, the component will be updated the spinner state to reflect completion, the call to action will be enabled and further `fetch` requests will be prevented. Also, `initTime` is removed from session storage. Clicking the enabled call to action will result in the user making a synchronous `POST` request to the same route and server-side processing will determine if they can continue to the RP or be presented with a page reflecting an account intervention being in place.
+If a `COMPLETED` or `INTERVENTION` status is returned by the API, the component will update the spinner state to reflect completion, the call to action will be enabled and further `fetch` requests will be prevented. Also, `initTime` is removed from session storage. Clicking the enabled call to action will result in the user making a synchronous `POST` request to the same route and server-side processing will determine if they can continue to the RP or be presented with a page reflecting an account intervention being in place.
 
-If a status of `ERROR` is returned, the component is updated spinner state to reflect an error and further `fetch` requests are prevented. Also, `initTime` is removed from session storage.
+If a status of `ERROR` is returned, the component updates its spinner state to reflect an error and further `fetch` requests are prevented. Also, `initTime` is removed from session storage.
 
-If no `fetch` request has resulted in a status of `COMPLETED`, `INTERVENTION` or `ERROR`, it schedule next request as set in in `config`. Once executed it checks how much time elapsed from the `initTime`. If elapsed time is longer than `msBeforeAbort`, recursive call is prevent from further execution and updates the spinner state to reflect error. Also, `initTime` is removed from session storage.
+If a `fetch` request doesn't result in a status of `COMPLETED`, `INTERVENTION` or `ERROR`, the component will schedule another request after the period set in `config`. Once the time period has elapsed the component checks how much time has elapsed from the `initTime`. If the elapsed time is longer than `msBeforeAbort` the recursive call is not made, the spinner state is updated to reflect error, and `initTime` is removed from session storage.
 
 ## Version History
 
