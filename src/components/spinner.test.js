@@ -625,7 +625,7 @@ describe("the spinner component", () => {
     test("should stop polling", async () => {
       const spyRequestIDProcessingStatus = jest.spyOn(spinner, 'requestIDProcessingStatus');
       spinner.init();
-      await wait(30)
+      await wait(50)
       expect(spyRequestIDProcessingStatus).toHaveBeenCalledTimes(2);
     });
   });
