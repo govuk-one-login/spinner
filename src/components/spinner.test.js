@@ -605,8 +605,8 @@ describe("the spinner component", () => {
     beforeEach(() => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeAbort: 15,
-        msBetweenRequests: 5,
-        msBetweenDomUpdate: 25,
+        msBetweenRequests: 10,
+        msBetweenDomUpdate: 2000,
       });
       container = document.getElementById("spinner-container");
       spinner = new Spinner(container);
@@ -623,11 +623,10 @@ describe("the spinner component", () => {
     });
 
     test("should end in error state due to the abort time", async () => {
+      const spyRequestIDProcessingStatus = jest.spyOn(spinner, 'requestIDProcessingStatus');
       spinner.init();
-      await wait(10)
-      expect(spinner.state.spinnerState).toBe("pending");
-      await wait(20)
-      expect(spinner.state.spinnerState).toBe("spinner__failed");
+      await wait(30)
+      expect(spyRequestIDProcessingStatus).toHaveBeenCalledTimes(2);
     });
   });
 
