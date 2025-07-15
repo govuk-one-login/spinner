@@ -622,7 +622,7 @@ describe("the spinner component", () => {
       jest.restoreAllMocks();
     });
 
-    test("should stop polling and call recursive function twice", async () => {
+    test("should stop polling", async () => {
       const spyRequestIDProcessingStatus = jest.spyOn(spinner, 'requestIDProcessingStatus');
       spinner.init();
       await wait(30)
