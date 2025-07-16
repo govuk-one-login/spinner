@@ -97,7 +97,6 @@ The Spinner component uses either an existing or newly generated timestamp as `i
 The `updateDomTimer` timer will update the DOM at set intervals to reflect any changes in the virtual DOM.
 The duration of this timer is set within the Spinner `config` property.
 
-
 If time elapsed from `initTime` is larger than `msBeforeAbort` or `msBeforeInformingOfLongWait` it update the state of the spinner to reflect actual state.
 
 ### 4. Perform initial update
@@ -119,9 +118,9 @@ If a `fetch` request doesn't result in a status of `COMPLETED`, `INTERVENTION` o
 ### 2.1.0
 
 - Introduced initialisation time stored in sessionStorage to make spinner more accurate and bug resistant.
-  - Added `initTime` to the config and stores it in session storage 
+  - Added `initTime` to the config and stores it in session storage
   - Added abortController to cancel request on page unload
-  - Removed `informUserWhereWaitIsLong`  and `abortUnresponsiveRequest` as those are checked each dom update according to time elapsed from `initTime`
+  - Removed `informUserWhereWaitIsLong` and `abortUnresponsiveRequest` as those are checked each dom update according to time elapsed from `initTime`
 
 ### 2.0.0
 
