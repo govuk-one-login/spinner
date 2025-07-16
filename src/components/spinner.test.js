@@ -49,7 +49,6 @@ beforeEach(() => {
   spinner = new Spinner(container);
 });
 
-
 describe("the spinner component", () => {
   describe("config property", () => {
     test("should exist with default values", () => {
@@ -351,9 +350,9 @@ describe("the spinner component", () => {
     describe("should set up the spinner HTML correctly", () => {
       beforeEach(() => {
         global.fetch = jest.fn(() =>
-            Promise.resolve({
-              json: () => Promise.resolve({ status: "PROCESSING" }),
-            }),
+          Promise.resolve({
+            json: () => Promise.resolve({ status: "PROCESSING" }),
+          }),
         );
       });
 
@@ -566,7 +565,7 @@ describe("the spinner component", () => {
 
     test("should update contents correctly", async () => {
       spinner.init();
-      await wait(30)
+      await wait(30);
       expect(container.innerHTML).toMatchSnapshot();
     });
   });
@@ -612,9 +611,9 @@ describe("the spinner component", () => {
       spinner = new Spinner(container);
 
       global.fetch = jest.fn(() =>
-          Promise.resolve({
-            json: () => Promise.resolve({ status: "PROCESSING" }),
-          }),
+        Promise.resolve({
+          json: () => Promise.resolve({ status: "PROCESSING" }),
+        }),
       );
     });
 
@@ -623,9 +622,12 @@ describe("the spinner component", () => {
     });
 
     test("should stop polling", async () => {
-      const spyRequestIDProcessingStatus = jest.spyOn(spinner, 'requestIDProcessingStatus');
+      const spyRequestIDProcessingStatus = jest.spyOn(
+        spinner,
+        "requestIDProcessingStatus",
+      );
       spinner.init();
-      await wait(50)
+      await wait(50);
       expect(spyRequestIDProcessingStatus).toHaveBeenCalledTimes(2);
     });
   });
@@ -636,9 +638,9 @@ describe("the spinner component", () => {
       spinner = new Spinner(container);
 
       global.fetch = jest.fn(() =>
-          Promise.resolve({
-            json: () => Promise.resolve({ status: "PROCESSING" }),
-          }),
+        Promise.resolve({
+          json: () => Promise.resolve({ status: "PROCESSING" }),
+        }),
       );
     });
 
@@ -647,14 +649,11 @@ describe("the spinner component", () => {
       sessionStorage.clear();
     });
 
-
     test("should save init time in session storage", async () => {
       await spinner.init();
       const initTime = sessionStorage.getItem("spinnerInitTime");
       expect(initTime).not.toBeNull();
     });
-
-
   });
 
   describe("when spinner is end in completion state", () => {
@@ -667,9 +666,9 @@ describe("the spinner component", () => {
       spinner = new Spinner(container);
 
       global.fetch = jest.fn(() =>
-          Promise.resolve({
-            json: () => Promise.resolve({ status: "COMPLETED" }),
-          }),
+        Promise.resolve({
+          json: () => Promise.resolve({ status: "COMPLETED" }),
+        }),
       );
     });
 
@@ -677,13 +676,12 @@ describe("the spinner component", () => {
       jest.restoreAllMocks();
     });
 
-
     test("should clear init time from session storage", async () => {
       await spinner.init();
       const initTime = sessionStorage.getItem("spinnerInitTime");
       expect(initTime).not.toBeNull();
       await wait(20);
-      expect(spinner.state.spinnerState).toBe("spinner__ready")
+      expect(spinner.state.spinnerState).toBe("spinner__ready");
       expect(sessionStorage.getItem("spinnerInitTime")).toBeNull();
     });
   });
@@ -699,9 +697,9 @@ describe("the spinner component", () => {
       spinner = new Spinner(container);
 
       global.fetch = jest.fn(() =>
-          Promise.resolve({
-            json: () => Promise.resolve({ status: "PROCESSING" }),
-          }),
+        Promise.resolve({
+          json: () => Promise.resolve({ status: "PROCESSING" }),
+        }),
       );
     });
 
@@ -718,5 +716,4 @@ describe("the spinner component", () => {
       expect(sessionStorage.getItem("spinnerInitTime")).toBeNull();
     });
   });
-
 });
