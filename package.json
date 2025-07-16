@@ -1,6 +1,6 @@
 {
   "name": "@govuk-one-login/spinner",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Spinner component used when a user returns from IPV to authentication",
   "main": "index.js",
   "type": "module",

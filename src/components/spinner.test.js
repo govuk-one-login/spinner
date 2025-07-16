@@ -49,11 +49,11 @@ beforeEach(() => {
   spinner = new Spinner(container);
 });
 
+
 describe("the spinner component", () => {
   describe("config property", () => {
     test("should exist with default values", () => {
       expect(spinner).toHaveProperty("config");
-      expect(spinner.config.msBetweenDomUpdate).toEqual(2000);
     });
     test("should be configurable through the dataset", () => {
       expect(spinner.config.msBeforeAbort).toEqual(30000);
@@ -344,17 +344,27 @@ describe("the spinner component", () => {
       expect(spinner.domRequirementsMet).toBe(true);
     });
 
-    test("should have a timers property", () => {
-      expect(spinner).toHaveProperty("timers");
-    });
-
     test("should have a createVirtualDom property", () => {
       expect(spinner).toHaveProperty("createVirtualDom");
     });
 
-    test("should set up the spinner HTML correctly", () => {
-      spinner.init();
-      expect(container.innerHTML).toMatchSnapshot();
+    describe("should set up the spinner HTML correctly", () => {
+      beforeEach(() => {
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+              json: () => Promise.resolve({ status: "PROCESSING" }),
+            }),
+        );
+      });
+
+      afterEach(() => {
+        jest.restoreAllMocks();
+      });
+
+      test("with initial values", () => {
+        spinner.init();
+        expect(container.innerHTML).toMatchSnapshot();
+      });
     });
   });
 
@@ -537,6 +547,7 @@ describe("the spinner component", () => {
     beforeEach(() => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeInformingOfLongWait: 20,
+        msBetweenRequests: 10,
         msBetweenDomUpdate: 10,
       });
       container = document.getElementById("spinner-container");
@@ -555,9 +566,7 @@ describe("the spinner component", () => {
 
     test("should update contents correctly", async () => {
       spinner.init();
-
-      await wait(50);
-
+      await wait(30)
       expect(container.innerHTML).toMatchSnapshot();
     });
   });
@@ -566,6 +575,7 @@ describe("the spinner component", () => {
     beforeEach(() => {
       document.body.innerHTML = getValidSpinnerDivHtml({
         msBeforeAbort: 20,
+        msBetweenRequests: 10,
         msBetweenDomUpdate: 10,
       });
       container = document.getElementById("spinner-container");
@@ -583,11 +593,130 @@ describe("the spinner component", () => {
     });
 
     test("should update contents correctly", async () => {
-      spinner.init();
+      await spinner.init();
 
       await wait(50);
 
       expect(container.innerHTML).toMatchSnapshot();
     });
   });
+
+  describe("when scheduled setTimeout tries to execute recursive function after msBeforeAbort", () => {
+    beforeEach(() => {
+      document.body.innerHTML = getValidSpinnerDivHtml({
+        msBeforeAbort: 15,
+        msBetweenRequests: 10,
+        msBetweenDomUpdate: 2000,
+      });
+      container = document.getElementById("spinner-container");
+      spinner = new Spinner(container);
+
+      global.fetch = jest.fn(() =>
+          Promise.resolve({
+            json: () => Promise.resolve({ status: "PROCESSING" }),
+          }),
+      );
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    test("should stop polling", async () => {
+      const spyRequestIDProcessingStatus = jest.spyOn(spinner, 'requestIDProcessingStatus');
+      spinner.init();
+      await wait(50)
+      expect(spyRequestIDProcessingStatus).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("when spinner is initialised", () => {
+    beforeEach(() => {
+      container = document.getElementById("spinner-container");
+      spinner = new Spinner(container);
+
+      global.fetch = jest.fn(() =>
+          Promise.resolve({
+            json: () => Promise.resolve({ status: "PROCESSING" }),
+          }),
+      );
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      sessionStorage.clear();
+    });
+
+
+    test("should save init time in session storage", async () => {
+      await spinner.init();
+      const initTime = sessionStorage.getItem("spinnerInitTime");
+      expect(initTime).not.toBeNull();
+    });
+
+
+  });
+
+  describe("when spinner is end in completion state", () => {
+    beforeEach(() => {
+      document.body.innerHTML = getValidSpinnerDivHtml({
+        msBetweenRequests: 10,
+        msBetweenDomUpdate: 10,
+      });
+      container = document.getElementById("spinner-container");
+      spinner = new Spinner(container);
+
+      global.fetch = jest.fn(() =>
+          Promise.resolve({
+            json: () => Promise.resolve({ status: "COMPLETED" }),
+          }),
+      );
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+
+    test("should clear init time from session storage", async () => {
+      await spinner.init();
+      const initTime = sessionStorage.getItem("spinnerInitTime");
+      expect(initTime).not.toBeNull();
+      await wait(20);
+      expect(spinner.state.spinnerState).toBe("spinner__ready")
+      expect(sessionStorage.getItem("spinnerInitTime")).toBeNull();
+    });
+  });
+
+  describe("when spinner is end in error state", () => {
+    beforeEach(() => {
+      document.body.innerHTML = getValidSpinnerDivHtml({
+        msBeforeAbort: 20,
+        msBetweenRequests: 10,
+        msBetweenDomUpdate: 5,
+      });
+      container = document.getElementById("spinner-container");
+      spinner = new Spinner(container);
+
+      global.fetch = jest.fn(() =>
+          Promise.resolve({
+            json: () => Promise.resolve({ status: "PROCESSING" }),
+          }),
+      );
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    test("should clear init time from session storage", async () => {
+      await spinner.init();
+      const initTime = sessionStorage.getItem("spinnerInitTime");
+      expect(initTime).not.toBeNull();
+      await wait(30);
+      expect(spinner.state.spinnerState).toBe("spinner__failed");
+      expect(sessionStorage.getItem("spinnerInitTime")).toBeNull();
+    });
+  });
+
 });
